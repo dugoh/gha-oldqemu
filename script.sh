@@ -68,7 +68,7 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-vde \
                                              --extra-cflags="-fno-pie" \
                                              --extra-ldflags="-no-pie"                        >/dev/null 2>&1 && ok || nok
-check make qemu;                 make                                                         >/dev/null 2>&1 && ok || warn
+check make qemu;                 make > makeoutput.txt 2>&1  && ok || nok
 ## fix make issue on older build machines
 #cd i386-softmmu || exit
 #check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
