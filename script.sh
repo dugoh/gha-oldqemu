@@ -37,26 +37,28 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
                                              --disable-vnc-sasl \
-                                             --disable-vde                                    >/dev/null 2>&1 && ok || nok
+                                             --disable-vde \
+                                             --extra-cflags="-fno-pie" \
+                                             --extra-ldflags="-no-pie"                        >/dev/null 2>&1 && ok || nok
 check make qemu;                 make                                                         >/dev/null 2>&1 && ok || warn
-cd i386-softmmu || exit
-check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
-                                     vl.o osdep.o monitor.o pci.o loader.o \
-                                     isa_mmio.o machine.o gdbstub.o gdbstub-xml.o \
-                                     msix.o ioport.o virtio-blk.o \
-                                     virtio-balloon.o virtio-net.o virtio-console.o \
-                                     kvm.o kvm-all.o usb-ohci.o eepro100.o ne2000.o \
-                                     pcnet.o rtl8139.o e1000.o wdt_ib700.o \
-                                     wdt_i6300esb.o ide.o pckbd.o vga.o  sb16.o es1370.o \
-                                     ac97.o dma.o fdc.o mc146818rtc.o serial.o i8259.o \
-                                     i8254.o pcspk.o pc.o cirrus_vga.o apic.o ioapic.o \
-                                     parallel.o acpi.o piix_pci.o usb-uhci.o vmmouse.o \
-                                     vmport.o vmware_vga.o hpet.o device-hotplug.o \
-                                     pci-hotplug.o smbios.o \
-                                     -Wl,--whole-archive ../libqemu_common.a libqemu.a ../libhw64/libqemuhw64.a \
-                                     -Wl,--no-whole-archive \
-                                     -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
-cd ..
+#cd i386-softmmu || exit
+#check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
+#                                     vl.o osdep.o monitor.o pci.o loader.o \
+#                                     isa_mmio.o machine.o gdbstub.o gdbstub-xml.o \
+#                                     msix.o ioport.o virtio-blk.o \
+#                                     virtio-balloon.o virtio-net.o virtio-console.o \
+#                                     kvm.o kvm-all.o usb-ohci.o eepro100.o ne2000.o \
+#                                     pcnet.o rtl8139.o e1000.o wdt_ib700.o \
+#                                     wdt_i6300esb.o ide.o pckbd.o vga.o  sb16.o es1370.o \
+#                                     ac97.o dma.o fdc.o mc146818rtc.o serial.o i8259.o \
+#                                     i8254.o pcspk.o pc.o cirrus_vga.o apic.o ioapic.o \
+#                                     parallel.o acpi.o piix_pci.o usb-uhci.o vmmouse.o \
+#                                     vmport.o vmware_vga.o hpet.o device-hotplug.o \
+#                                     pci-hotplug.o smbios.o \
+#                                     -Wl,--whole-archive ../libqemu_common.a libqemu.a ../libhw64/libqemuhw64.a \
+#                                     -Wl,--no-whole-archive \
+#                                     -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
+#cd ..
 check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
 check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
