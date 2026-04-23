@@ -35,6 +35,7 @@ check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' 
 check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
 # Fix curses display on 64-bit: console_ch_t is 8 bytes but chtype is 4 bytes
 # The old code casts directly causing garbled output. Convert element by element for now.
+cp curses.c curses.corig1
 check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'                                        && ok || nok
 --- curses.c
 +++ curses.c
@@ -60,6 +61,7 @@ check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'          
      pnoutrefresh(screenpad, py, px, sminy, sminx, smaxy - 1, smaxx - 1);
      refresh();
 __EOF__
+cp curses.c curses.corig2
 check remove tty test;           sed -i -n 'N;/isatty/{n;n;n;n;d};P;D' curses.c               >/dev/null 2>&1 && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
