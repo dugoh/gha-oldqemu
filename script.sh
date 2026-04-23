@@ -62,7 +62,7 @@ check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'          
      refresh();
 __EOF__
 cp curses.c curses.corig2
-check remove tty test;           sed -i -n 'N;/isatty/{n;n;n;n;d};P;D' curses.c               >/dev/null 2>&1 && ok || nok
+check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c            >/dev/null 2>&1 && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
