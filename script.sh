@@ -33,6 +33,33 @@ cd qemu || exit
 check going back to 0.11;        git reset --hard 08fd2f30bd3ee5d04596da8293689af4d4f7eb6c    >/dev/null 2>&1 && ok || nok
 check remove definition of BIT;  sed -i -e 's/#define BIT.n. .1 << .n../\/\/&/' hw/eepro100.c >/dev/null 2>&1 && ok || nok
 check define BIT properly;       printf "#ifndef BIT\n#define BIT(n) (1 << (n))\n#endif\n" >> qemu-common.h   && ok || nok
+# Fix curses display on 64-bit: console_ch_t is 8 bytes but chtype is 4 bytes
+# The old code casts directly causing garbled output. Convert element by element for now.
+check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'                                        && ok || nok
+--- curses.c
++++ curses.c
+@@ -47,11 +47,16 @@
+
+ static void curses_update(DisplayState *ds, int x, int y, int w, int h)
+ {
+-    chtype *line;
++    int i;
++    console_ch_t *line;
++    chtype curses_line[160];
+
+-    line = ((chtype *) screen) + y * width;
+-    for (h += y; y < h; y ++, line += width)
+-        mvwaddchnstr(screenpad, y, 0, line, width);
++    line = screen + y * width;
++    for (h += y; y < h; y++, line += width) {
++        for (i = 0; i < width && i < 160; i++)
++            curses_line[i] = (chtype)(line[i] & 0xffffffff);
++        mvwaddchnstr(screenpad, y, 0, curses_line, width);
++    }
+
+     pnoutrefresh(screenpad, py, px, sminy, sminx, smaxy - 1, smaxx - 1);
+     refresh();
+__EOF__
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
@@ -41,6 +68,7 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --extra-cflags="-fno-pie" \
                                              --extra-ldflags="-no-pie"                        >/dev/null 2>&1 && ok || nok
 check make qemu;                 make                                                         >/dev/null 2>&1 && ok || warn
+## fix make issue on older build machines
 #cd i386-softmmu || exit
 #check build where make fails;    gcc -g -Wl,--warn-common  -m64  -o qemu \
 #                                     vl.o osdep.o monitor.o pci.o loader.o \
@@ -59,7 +87,7 @@ check make qemu;                 make                                           
 #                                     -Wl,--no-whole-archive \
 #                                     -lm -lrt -lpthread -lz -lutil -lncurses -ltinfo          >/dev/null 2>&1 && ok || nok
 #cd ..
-check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
+#check continue make qemu;        make                                                         >/dev/null 2>&1 && ok || nok
 check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
 check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
