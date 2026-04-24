@@ -23,7 +23,7 @@ function format {
 }
 
 function index {
-  cd ${wd}/gh-pages/ || return 1
+  cd "${wd}/gh-pages/" || return 1
   echo "<HTML><HEAD><TITLE>LINKS</TITLE></HEAD><BODY><ul>" >index.html
   # shellcheck disable=SC2010
   for file in $(ls | grep -E -v "^index.html$| "); do \
@@ -91,6 +91,6 @@ check make qemu;                 make > makeoutput.txt 2>&1  && ok || nok
 check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
 check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
-check zip her up;                tar -cjf ${wd}/gh-pages/qemu.tar.bz2 ./qemu                  >/dev/null 2>&1 && ok || nok
+check zip her up;                tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                >/dev/null 2>&1 && ok || nok
 check create gh-page;            index
 )|format
