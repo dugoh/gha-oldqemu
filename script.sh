@@ -79,7 +79,7 @@ check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'          
      pnoutrefresh(screenpad, py, px, sminy, sminx, smaxy - 1, smaxx - 1);
      refresh();
 __EOF__
-check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c            >/dev/null 2>&1 && ok || nok
+check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c             >/dev/null 2>&1 && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
@@ -92,5 +92,5 @@ check make install qemu;         sudo make install                              
 check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
 check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
 check zip her up;                tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                >/dev/null 2>&1 && ok || nok
-check create gh-page;            index
+check create gh-page;            index                                                        >/dev/null 2>&1 && ok || nok
 )|format
