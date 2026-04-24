@@ -4,6 +4,6 @@ A reproducible build of an old qemu version (0.11) on a modern linux system. Ref
 
 Build artifact at https://dugoh.github.io/gha-oldqemu/
 
-The artifact is nothing more than a tarred up qemu source directory after the build. Fish out the binaries and bios you need or run `make install`.
+The artifact is nothing more than a tarred up qemu source directory from after the build. Fish out the binaries and bios you need or run `make install` from /tmp/qemu.
 
 I don't do workflow, branches or nice commit messages here and have no qualms using main as a scratch pad. Hic Sunt Leones, here be dragons, buyer beware and all that. Worst case script.sh just provides you hints.
