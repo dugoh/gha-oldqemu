@@ -11,7 +11,7 @@ function ok {
 
 function nok {
   echo -e "[ \e[38;5;31mfailure\e[0m ]"
-  (( noks = noks + 1 ))
+  exit 1
 }
 
 function warn {
@@ -42,7 +42,6 @@ function index {
 }
 
 wd=$(pwd)
-export noks=0
 
 (\
 mkdir gh-pages || exit 1
@@ -80,6 +79,7 @@ check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'          
      pnoutrefresh(screenpad, py, px, sminy, sminx, smaxy - 1, smaxx - 1);
      refresh();
 __EOF__
+# configure qemu for completely headless operation
 check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c             >/dev/null 2>&1 && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
@@ -90,8 +90,9 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --extra-ldflags="-no-pie"                        >/dev/null 2>&1 && ok || nok
 check make qemu;                 make > makeoutput.txt 2>&1  && ok || nok
 check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
-check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
 check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
-check zip her up;                tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                >/dev/null 2>&1 && ok || nok
+check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
+cd .. || exit 1
+check zip qemu src dir;          tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                >/dev/null 2>&1 && ok || nok
 check create gh-page;            index                                                        >/dev/null 2>&1 && ok || nok
 )|format
