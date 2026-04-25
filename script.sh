@@ -36,7 +36,7 @@ function index {
       )>>index.html;              \
   done
   echo "</ul></BODY></HTML>" >>index.html
-  cd "${wd}" || return 1
+  #cd "${wd}" || return 1
   [[ -f index.html ]] && return 0
   return 1
 }
