@@ -81,19 +81,22 @@ check fix curses;                patch -p0 >/dev/null 2>&1 <<'__EOF__'          
      refresh();
 __EOF__
 # configure qemu for completely headless operation
-check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c             >/dev/null 2>&1 && ok || nok
+check remove tty test;           sed -i -n '$!N;/isatty/{n;n;n;n;d};P;D' curses.c                                >/dev/null 2>&1 && ok || nok
+# gcc 14+ makes int-conversion a hard error, so this probe (int main returning                                                                 
+# curses_version(), a char*) no longer compiles and curses gets silently disabled.                                                             
+check fix curses probe;          sed -i 's/return curses_version();/return curses_version() != NULL;/' configure >/dev/null 2>&1 && ok || nok
 check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-sdl \
                                              --disable-vnc-tls \
                                              --disable-vnc-sasl \
                                              --disable-vde \
                                              --extra-cflags="-fno-pie -std=gnu17" \
-                                             --extra-ldflags="-no-pie -std=gnu17"              >/dev/null 2>&1 && ok || nok
+                                             --extra-ldflags="-no-pie -std=gnu17"                                >/dev/null 2>&1 && ok || nok
 check make qemu;                 make > makeoutput.txt 2>&1  && ok || nok
-check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
-check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
-check remove git tracking;       rm -rf .git                                                  >/dev/null 2>&1 && ok || nok
+check make install qemu;         sudo make install                                                               >/dev/null 2>&1 && ok || nok
+check test qemu;                 qemu --help                                                                     >/dev/null 2>&1 && ok || nok
+check remove git tracking;       rm -rf .git                                                                     >/dev/null 2>&1 && ok || nok
 cd .. || exit 1
-check zip qemu src dir;          tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                >/dev/null 2>&1 && ok || nok
-check create gh-page;            index                                                        >/dev/null 2>&1 && ok || nok
+check zip qemu src dir;          tar -cjf "${wd}"/gh-pages/qemu.tar.bz2 ./qemu                                   >/dev/null 2>&1 && ok || nok
+check create gh-page;            index                                                                           >/dev/null 2>&1 && ok || nok
 )|format
