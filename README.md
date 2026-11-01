@@ -1,6 +1,6 @@
 # gha-oldqemu
 
-A reproducible build of an old qemu version (0.11) on a modern linux system. Reference being gha runners, currently Ubuntu 24.04.4 LTS/noble. Its previous incarnation died during the great enshitification of Travis CI.
+A reproducible build of an old qemu version (0.11) on a modern linux system. Reference being gha runners, currently Ubuntu 24.04.4 LTS/noble(?). Its previous incarnation died during the great enshitification of Travis CI.
 
 Build artifact at https://dugoh.github.io/gha-oldqemu/
 
