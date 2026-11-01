@@ -87,8 +87,8 @@ check configure qemu;            ./configure --target-list=i386-softmmu \
                                              --disable-vnc-tls \
                                              --disable-vnc-sasl \
                                              --disable-vde \
-                                             --extra-cflags="-fno-pie" \
-                                             --extra-ldflags="-no-pie"                        >/dev/null 2>&1 && ok || nok
+                                             --extra-cflags="-fno-pie -std=gnu17" \
+                                             --extra-ldflags="-no-pie-std=gnu17"              >/dev/null 2>&1 && ok || nok
 check make qemu;                 make > makeoutput.txt 2>&1  && ok || nok
 check make install qemu;         sudo make install                                            >/dev/null 2>&1 && ok || nok
 check test qemu;                 qemu --help                                                  >/dev/null 2>&1 && ok || nok
