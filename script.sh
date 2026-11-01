@@ -11,6 +11,7 @@ function ok {
 
 function nok {
   echo -e "[ \e[38;5;31mfailure\e[0m ]"
+  [[ -f makeoutput.txt ]] && { echo ; cat makeoutput.txt ; }
   exit 1
 }
 
